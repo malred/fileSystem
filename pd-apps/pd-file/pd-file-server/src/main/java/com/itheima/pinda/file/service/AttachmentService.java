@@ -20,4 +20,11 @@ public interface AttachmentService {
      * @return
      */
     public AttachmentDTO upload(MultipartFile file, Long bizId, String bizType, Long id, Boolean isSingle);
+
+    /**
+     * 删除附件
+     *
+     * @param ids
+     */
+    public void remove(Long[] ids);
 }

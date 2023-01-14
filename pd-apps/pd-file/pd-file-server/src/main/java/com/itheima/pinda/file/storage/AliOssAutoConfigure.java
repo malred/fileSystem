@@ -9,18 +9,17 @@ import com.aliyun.oss.model.PutObjectRequest;
 import com.aliyun.oss.model.PutObjectResult;
 import com.itheima.pinda.file.domain.FileDeleteDO;
 import com.itheima.pinda.file.entity.File;
+import com.itheima.pinda.file.properties.FileServerProperties;
 import com.itheima.pinda.file.strategy.impl.AbstractFileStrategy;
 import com.itheima.pinda.utils.StrPool;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import com.itheima.pinda.file.properties.FileServerProperties;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
@@ -96,10 +95,8 @@ public class AliOssAutoConfigure {
                     file.getExt();
             //日期文件夹，例如：2020\04
             String relativePath =
-                    Paths.get(LocalDate.now().
-                            format(DateTimeFormatter.
-                                    ofPattern(DEFAULT_MONTH_FORMAT_SLASH))).
-                            toString();
+                    LocalDate.now().format(DateTimeFormatter
+                            .ofPattern(DEFAULT_MONTH_FORMAT_SLASH)).toString();
             // web服务器存放的相对路径
             String relativeFileName = relativePath + StrPool.SLASH + fileName;
             relativeFileName = StrUtil.replace(relativeFileName, "\\\\",

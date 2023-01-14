@@ -1,23 +1,29 @@
 package com.itheima.pinda.file.service.impl;
 
+import cn.hutool.core.util.ArrayUtil;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.itheima.pinda.base.id.IdGenerate;
 import com.itheima.pinda.database.mybatis.conditions.Wraps;
 import com.itheima.pinda.dozer.DozerUtils;
+import com.itheima.pinda.file.dao.AttachmentMapper;
+import com.itheima.pinda.file.domain.FileDeleteDO;
 import com.itheima.pinda.file.dto.AttachmentDTO;
 import com.itheima.pinda.file.entity.Attachment;
 import com.itheima.pinda.file.entity.File;
+import com.itheima.pinda.file.properties.FileServerProperties;
 import com.itheima.pinda.file.service.AttachmentService;
+import com.itheima.pinda.file.strategy.FileStrategy;
 import com.itheima.pinda.utils.DateUtils;
 import lombok.extern.slf4j.Slf4j;
-import com.itheima.pinda.file.dao.AttachmentMapper;
-import com.itheima.pinda.file.properties.FileServerProperties;
-import com.itheima.pinda.file.strategy.FileStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 附件-业务逻辑类
@@ -60,7 +66,7 @@ public class AttachmentServiceImpl
     private FileServerProperties fileServerProperties;
 
     /**
-     * 上传文件
+     * 上传附件
      *
      * @param multipartFile
      * @param bizId         业务id
@@ -109,5 +115,36 @@ public class AttachmentServiceImpl
         }
         // 转换attachment为DTO对象,并返回
         return dozerUtils.map(attachment, AttachmentDTO.class);
+    }
+
+    /**
+     * 根据id删除附件
+     *
+     * @param ids
+     */
+    @Override
+    public void remove(Long[] ids) {
+        if (ArrayUtil.isEmpty(ids)) {
+            return;
+        }
+        // 0,查询数据库,获取被删除文件的信息
+        // select * from pd_attachment where id in (1,2,...)
+        List<Attachment> list = super.list(Wrappers.<Attachment>lambdaQuery()
+                .in(Attachment::getId, ids));
+        // 1,从数据库删除文件信息
+        super.removeByIds(Arrays.asList(ids));
+        log.debug("ids->{}", Arrays.asList(ids));
+        //对象格式处理
+        List<FileDeleteDO> fileDeleteDOList =
+                list.stream().map((fi) -> FileDeleteDO.builder()
+                        .relativePath(fi.getRelativePath()) //文件在服务器的相对路径
+                        .fileName(fi.getFilename()) //唯一文件名
+                        .group(fi.getGroup()) //fastDFS返回的组 用于FastDFS
+                        .path(fi.getPath()) //fastdfs 的路径
+                        .build())
+                        .collect(Collectors.toList());
+        log.debug("fileDeleteDOList->{}", fileDeleteDOList.toString());
+        // 2,删除存放在磁盘的文件
+        fileStrategy.delete(fileDeleteDOList);
     }
 }

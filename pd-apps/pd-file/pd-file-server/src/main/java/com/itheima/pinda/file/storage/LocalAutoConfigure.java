@@ -103,6 +103,8 @@ public class LocalAutoConfigure {
          */
         @Override
         public void delete(FileDeleteDO fileDeleteDO) {
+            buildClient();
+            log.debug(properties.toString());
             // 拼接要删除的文件的绝对磁盘路径
             String filePath = Paths.get(
                     properties.getEndpoint(),
@@ -110,6 +112,7 @@ public class LocalAutoConfigure {
                     fileDeleteDO.getRelativePath(),
                     fileDeleteDO.getFileName()
             ).toString();
+            log.debug("filePath->{}", filePath);
             // 封装file对象
             java.io.File file = new java.io.File(filePath);
             // 删除文件
