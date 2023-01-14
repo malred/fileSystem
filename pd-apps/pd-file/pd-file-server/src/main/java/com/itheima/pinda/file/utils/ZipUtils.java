@@ -1,4 +1,4 @@
-package org.malred.pinda.file.utils;
+package com.itheima.pinda.file.utils;
 
 import com.itheima.pinda.exception.BizException;
 import com.itheima.pinda.utils.StrPool;

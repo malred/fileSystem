@@ -1,17 +1,17 @@
-package org.malred.pinda.file.strategy.impl;
+package com.itheima.pinda.file.strategy.impl;
 
 import com.itheima.pinda.exception.BizException;
 import com.itheima.pinda.exception.code.ExceptionCode;
 import com.itheima.pinda.file.domain.FileDeleteDO;
 import com.itheima.pinda.file.entity.File;
 import com.itheima.pinda.file.enumeration.IconType;
+import com.itheima.pinda.file.utils.FileDataTypeUtil;
 import com.itheima.pinda.utils.DateUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.malred.pinda.file.properties.FileServerProperties;
-import org.malred.pinda.file.strategy.FileStrategy;
-import org.malred.pinda.file.utils.FileDataTypeUtil;
+import com.itheima.pinda.file.properties.FileServerProperties;
+import com.itheima.pinda.file.strategy.FileStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.multipart.MultipartFile;
 

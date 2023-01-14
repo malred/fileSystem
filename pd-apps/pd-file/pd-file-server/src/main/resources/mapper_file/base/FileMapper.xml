@@ -33,7 +33,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, create_time, create_user, update_time, update_user, 
+        id, create_time, create_user, update_time, update_user,
         data_type, submitted_file_name, tree_path, grade, is_delete, folder_id, url, size, folder_name, group_, path, relative_path, file_md5, context_type, filename, ext, icon, create_month, create_week, create_day
     </sql>
 

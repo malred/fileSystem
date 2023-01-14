@@ -1,8 +1,9 @@
-package org.malred.pinda.file.dao;
+package com.itheima.pinda.file.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.itheima.pinda.file.domain.FileStatisticsDO;
 import com.itheima.pinda.file.entity.File;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
@@ -13,6 +14,7 @@ import java.util.List;
  * Mapper 接口
  * 文件表
  */
+@Mapper
 @Repository
 public interface FileMapper extends BaseMapper<File> {
     /**

@@ -1,9 +1,10 @@
-package org.malred.pinda.file;
+package com.itheima.pinda.file;
 
 import com.itheima.pinda.validator.config.EnableFormValidator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.netflix.hystrix.EnableHystrix;
 import org.springframework.cloud.openfeign.EnableFeignClients;
@@ -22,13 +23,14 @@ import java.net.UnknownHostException;
 // 支持feign远程调用
 @EnableFeignClients(value = {
         // 被调用的接口所在的包
-        "com.itheima.pinda",
+        "com.itheima.pinda"
 })
 // 支持事务管理
 @EnableTransactionManagement
 @Slf4j
 // 支持表单校验
 @EnableFormValidator
+@EnableConfigurationProperties
 public class FileServerApplication {
     public static void main(String[] args) throws UnknownHostException {
         ConfigurableApplicationContext application = SpringApplication.run(FileServerApplication.class, args);

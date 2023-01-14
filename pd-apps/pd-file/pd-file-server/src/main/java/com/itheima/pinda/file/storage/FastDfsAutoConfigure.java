@@ -1,12 +1,12 @@
-package org.malred.pinda.file.storage;
+package com.itheima.pinda.file.storage;
 
 import com.github.tobato.fastdfs.domain.fdfs.StorePath;
 import com.github.tobato.fastdfs.service.FastFileStorageClient;
 import com.itheima.pinda.file.domain.FileDeleteDO;
 import com.itheima.pinda.file.entity.File;
+import com.itheima.pinda.file.strategy.impl.AbstractFileStrategy;
 import lombok.extern.slf4j.Slf4j;
-import org.malred.pinda.file.properties.FileServerProperties;
-import org.malred.pinda.file.strategy.impl.AbstractFileStrategy;
+import com.itheima.pinda.file.properties.FileServerProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;

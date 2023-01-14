@@ -1,4 +1,4 @@
-package org.malred.pinda.file.strategy;
+package com.itheima.pinda.file.strategy;
 
 import com.itheima.pinda.file.domain.FileDeleteDO;
 import com.itheima.pinda.file.entity.File;

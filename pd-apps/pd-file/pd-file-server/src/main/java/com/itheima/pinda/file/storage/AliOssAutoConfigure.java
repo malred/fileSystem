@@ -1,4 +1,4 @@
-package org.malred.pinda.file.storage;
+package com.itheima.pinda.file.storage;
 
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
@@ -9,11 +9,11 @@ import com.aliyun.oss.model.PutObjectRequest;
 import com.aliyun.oss.model.PutObjectResult;
 import com.itheima.pinda.file.domain.FileDeleteDO;
 import com.itheima.pinda.file.entity.File;
+import com.itheima.pinda.file.strategy.impl.AbstractFileStrategy;
 import com.itheima.pinda.utils.StrPool;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.malred.pinda.file.properties.FileServerProperties;
-import org.malred.pinda.file.strategy.impl.AbstractFileStrategy;
+import com.itheima.pinda.file.properties.FileServerProperties;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;

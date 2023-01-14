@@ -1,14 +1,14 @@
-package org.malred.pinda.file.storage;
+package com.itheima.pinda.file.storage;
 
 import cn.hutool.core.util.StrUtil;
 import com.itheima.pinda.file.domain.FileDeleteDO;
 import com.itheima.pinda.file.entity.File;
+import com.itheima.pinda.file.properties.FileServerProperties;
+import com.itheima.pinda.file.strategy.impl.AbstractFileStrategy;
 import com.itheima.pinda.utils.DateUtils;
 import com.itheima.pinda.utils.StrPool;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
-import org.malred.pinda.file.properties.FileServerProperties;
-import org.malred.pinda.file.strategy.impl.AbstractFileStrategy;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -60,6 +60,7 @@ public class LocalAutoConfigure {
          */
         @Override
         public File uploadFile(File file, MultipartFile multipartFile) throws Exception {
+            buildClient();
             String endpoint = properties.getEndpoint();
             String bucketName = properties.getBucketName();
             String uriPrefix = properties.getUriPrefix();
@@ -72,6 +73,7 @@ public class LocalAutoConfigure {
                     .format(DateTimeFormatter.ofPattern(DateUtils.DEFAULT_MONTH_FORMAT_SLASH))).toString();
             // 文件存放的绝对路径
             String absolutePath = Paths.get(endpoint, bucketName, relativePath).toString();
+            log.debug(Paths.get(absolutePath, fileName).toString());
             // 目标输出文件
             java.io.File outFile = new java.io.File(Paths.get(absolutePath, fileName).toString());
             // 写入数据

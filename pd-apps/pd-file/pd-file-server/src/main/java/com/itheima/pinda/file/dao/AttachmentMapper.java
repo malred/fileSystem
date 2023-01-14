@@ -1,4 +1,4 @@
-package org.malred.pinda.file.dao;
+package com.itheima.pinda.file.dao;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -7,8 +7,11 @@ import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.itheima.pinda.file.dto.AttachmentResultDTO;
 import com.itheima.pinda.file.entity.Attachment;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -20,6 +23,7 @@ import java.util.List;
  * 附件
  * </p>
  */
+@Mapper
 @Repository
 public interface AttachmentMapper extends BaseMapper<Attachment> {
     /**

@@ -1,4 +1,4 @@
-package org.malred.pinda.file.utils;
+package com.itheima.pinda.file.utils;
 
 import com.itheima.pinda.file.enumeration.DataType;
 import lombok.extern.slf4j.Slf4j;

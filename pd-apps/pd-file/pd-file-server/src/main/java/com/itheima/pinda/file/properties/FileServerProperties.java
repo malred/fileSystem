@@ -1,4 +1,4 @@
-package org.malred.pinda.file.properties;
+package com.itheima.pinda.file.properties;
 
 import com.itheima.pinda.file.enumeration.FileStorageType;
 import com.itheima.pinda.utils.StrPool;

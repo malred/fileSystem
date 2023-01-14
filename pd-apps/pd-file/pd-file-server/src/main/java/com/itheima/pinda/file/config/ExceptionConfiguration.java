@@ -1,4 +1,4 @@
-package org.malred.pinda.file.config;
+package com.itheima.pinda.file.config;
 
 import com.itheima.pinda.common.handler.DefaultGlobalExceptionHandler;
 import org.springframework.context.annotation.Configuration;
