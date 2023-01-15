@@ -1,10 +1,13 @@
 package com.itheima.pinda.file.service.impl;
 
 import cn.hutool.core.util.ArrayUtil;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.itheima.pinda.base.id.IdGenerate;
 import com.itheima.pinda.database.mybatis.conditions.Wraps;
+import com.itheima.pinda.database.mybatis.conditions.query.LbqWrapper;
 import com.itheima.pinda.dozer.DozerUtils;
 import com.itheima.pinda.exception.BizException;
 import com.itheima.pinda.file.biz.FileBiz;
@@ -12,6 +15,8 @@ import com.itheima.pinda.file.dao.AttachmentMapper;
 import com.itheima.pinda.file.domain.FileDO;
 import com.itheima.pinda.file.domain.FileDeleteDO;
 import com.itheima.pinda.file.dto.AttachmentDTO;
+import com.itheima.pinda.file.dto.AttachmentResultDTO;
+import com.itheima.pinda.file.dto.FilePageReqDTO;
 import com.itheima.pinda.file.entity.Attachment;
 import com.itheima.pinda.file.entity.File;
 import com.itheima.pinda.file.properties.FileServerProperties;
@@ -236,5 +241,37 @@ public class AttachmentServiceImpl
         ).collect(Collectors.toList());
         // 下载
         fileBiz.down(fileDOList, request, response);
+    }
+
+    /**
+     * 查询附件分页数据
+     *
+     * @param page
+     * @param data
+     * @return
+     */
+    @Override
+    public IPage<Attachment> page(Page<Attachment> page, FilePageReqDTO data) {
+        Attachment attachment = dozerUtils.map(data, Attachment.class);
+        // ${ew.customSqlSegment} 语法一定要手动eq like 等 不能用lbQ!
+        LbqWrapper<Attachment> wrapper = Wraps.<Attachment>lbQ()
+                .like(Attachment::getSubmittedFileName, attachment.getSubmittedFileName())
+                .like(Attachment::getBizType, attachment.getBizType())
+                .like(Attachment::getBizId, attachment.getBizId())
+                .eq(Attachment::getDataType, attachment.getDataType())
+                .orderByDesc(Attachment::getId);
+        return baseMapper.page(page, wrapper);
+    }
+
+    /**
+     * 根据业务类型和业务id查询附件
+     *
+     * @param bizTypes
+     * @param bizIds
+     * @return
+     */
+    @Override
+    public List<AttachmentResultDTO> find(String[] bizTypes, String[] bizIds) {
+        return baseMapper.find(bizTypes, bizIds);
     }
 }
