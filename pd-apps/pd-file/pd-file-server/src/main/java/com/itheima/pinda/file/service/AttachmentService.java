@@ -3,6 +3,9 @@ package com.itheima.pinda.file.service;
 import com.itheima.pinda.file.dto.AttachmentDTO;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 /**
  * 附件-业务逻辑接口
  *
@@ -27,4 +30,32 @@ public interface AttachmentService {
      * @param ids
      */
     public void remove(Long[] ids);
+
+    /**
+     * 根据业务id/业务类型删除附件
+     *
+     * @param bizId
+     * @param bizType
+     */
+    public void removeByBizIdAndBizType(String bizId, String bizType);
+
+    /**
+     * 根据文件id打包下载
+     *
+     * @param request
+     * @param response
+     * @param ids
+     */
+    public void download(HttpServletRequest request, HttpServletResponse response, Long[] ids) throws Exception;
+
+    /**
+     * 根据业务id和业务类型下载附件
+     *
+     * @param request
+     * @param response
+     * @param bizTypes
+     * @param bizIds
+     * @throws Exception
+     */
+    void downloadByBiz(HttpServletRequest request, HttpServletResponse response, String[] bizTypes, String[] bizIds) throws Exception;
 }

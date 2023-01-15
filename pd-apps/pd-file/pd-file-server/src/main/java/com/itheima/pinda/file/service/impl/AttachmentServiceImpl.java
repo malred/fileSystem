@@ -6,7 +6,10 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.itheima.pinda.base.id.IdGenerate;
 import com.itheima.pinda.database.mybatis.conditions.Wraps;
 import com.itheima.pinda.dozer.DozerUtils;
+import com.itheima.pinda.exception.BizException;
+import com.itheima.pinda.file.biz.FileBiz;
 import com.itheima.pinda.file.dao.AttachmentMapper;
+import com.itheima.pinda.file.domain.FileDO;
 import com.itheima.pinda.file.domain.FileDeleteDO;
 import com.itheima.pinda.file.dto.AttachmentDTO;
 import com.itheima.pinda.file.entity.Attachment;
@@ -20,6 +23,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -64,6 +69,11 @@ public class AttachmentServiceImpl
      */
     @Autowired
     private FileServerProperties fileServerProperties;
+    /**
+     * 共用文件下载类
+     */
+    @Autowired
+    private FileBiz fileBiz;
 
     /**
      * 上传附件
@@ -146,5 +156,85 @@ public class AttachmentServiceImpl
         log.debug("fileDeleteDOList->{}", fileDeleteDOList.toString());
         // 2,删除存放在磁盘的文件
         fileStrategy.delete(fileDeleteDOList);
+    }
+
+    /**
+     * 根据业务id和业务类型删除附件
+     *
+     * @param bizId
+     * @param bizType
+     */
+    @Override
+    public void removeByBizIdAndBizType(String bizId, String bizType) {
+        //根据业务类和业务id查询数据库
+        List<Attachment> list = super.list(
+                Wraps.<Attachment>lbQ()
+                        .eq(Attachment::getBizId, bizId)
+                        .eq(Attachment::getBizType, bizType));
+        if (list.isEmpty()) {
+            return;
+        }
+        //根据id删除文件
+        remove(list.stream().mapToLong(
+                Attachment::getId).boxed().toArray(Long[]::new));
+    }
+
+    /**
+     * 根据文件id打包下载
+     *
+     * @param request
+     * @param response
+     * @param ids
+     */
+    @Override
+    public void download(HttpServletRequest request, HttpServletResponse response, Long[] ids) throws Exception {
+        // 根据文件id查询数据库
+        List<Attachment> list = (List<Attachment>) super.listByIds(Arrays.asList(ids));
+        // 下载
+        down(list, request, response);
+    }
+
+    /**
+     * 根据业务id和业务类型下载附件
+     *
+     * @param request
+     * @param response
+     * @param bizTypes
+     * @param bizIds
+     * @throws Exception
+     */
+    @Override
+    public void downloadByBiz(HttpServletRequest request, HttpServletResponse response, String[] bizTypes, String[] bizIds) throws Exception {
+        List<Attachment> list = super.list(
+                Wraps.<Attachment>lbQ()
+                        .in(Attachment::getBizType, bizTypes)
+                        .in(Attachment::getBizId, bizIds));
+        // 下载
+        down(list, request, response);
+    }
+
+    /**
+     * 公共转换list并下载的方法
+     *
+     * @param list
+     * @param request
+     * @param response
+     * @throws Exception
+     */
+    public void down(List<Attachment> list, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        // 非空判断
+        if (list.isEmpty()) {
+            throw BizException.wrap("您下载的文件不存在!");
+        }
+        // 附件list转为filedo类型list
+        List<FileDO> fileDOList = list.stream().map((file) -> FileDO.builder()
+                .url(file.getUrl())
+                .submittedFileName(file.getSubmittedFileName())
+                .size(file.getSize())
+                .dataType(file.getDataType())
+                .build()
+        ).collect(Collectors.toList());
+        // 下载
+        fileBiz.down(fileDOList, request, response);
     }
 }

@@ -1,9 +1,13 @@
 package com.itheima.pinda.file.controller;
 
+import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
 import com.itheima.pinda.base.BaseController;
 import com.itheima.pinda.base.R;
+import com.itheima.pinda.exception.code.ExceptionCode;
 import com.itheima.pinda.file.dto.AttachmentDTO;
+import com.itheima.pinda.file.dto.AttachmentRemoveDTO;
 import com.itheima.pinda.file.service.AttachmentService;
+import com.itheima.pinda.utils.BizAssert;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -12,6 +16,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * 文件服务--附件处理控制器
@@ -84,5 +91,60 @@ public class AttachmentController extends BaseController {
         // 执行删除逻辑
         attachmentService.remove(ids);
         return this.success(true);
+    }
+
+    /**
+     * 根据业务类型或业务id删除文件
+     *
+     * @param dto
+     * @return
+     */
+    @ApiOperation(value = "根据业务类型或业务id删除文件",
+            notes = "根据业务类型或业务id删除文件")
+    @DeleteMapping(value = "/biz")
+    public R<Boolean> removeByBizIdAndBizType(@RequestBody AttachmentRemoveDTO dto) {
+        attachmentService.removeByBizIdAndBizType(dto.getBizId(),
+                dto.getBizType());
+        return success(true);
+    }
+
+    /**
+     * 根据文件id打包下载
+     *
+     * @param ids
+     */
+    @ApiOperation(value = "根据文件ids打包下载", notes = "根据文件ids打包下载")
+    @GetMapping(value = "/download",
+            // 数据使用的是二进制流的形式
+            produces = "application/octet-stream")
+    public void download(@RequestParam(value = "ids[]") Long[] ids,
+                         HttpServletRequest request,
+                         HttpServletResponse response) throws Exception {
+        attachmentService.download(request, response, ids);
+    }
+
+    /**
+     * 根据业务类型或者业务id其中之一，或者2个同时打包下载文件
+     *
+     * @param bizIds   业务id
+     * @param bizTypes 业务类型
+     */
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "bizIds[]", value = "业务id数组", dataType = "array", paramType = "query"),
+            @ApiImplicitParam(name = "bizTypes[]", value = "业务类型数组", dataType = "array", paramType = "query"),
+    })
+    @ApiOperation(value = "根据业务类型/业务id打包下载", notes = "根据业务id下载一个文件或多个文件打包下载")
+    @GetMapping(value = "/download/biz", produces = "application/octet-stream")
+    public void downloadByBiz(
+            @RequestParam(value = "bizIds[]", required = false) String[] bizIds,
+            @RequestParam(value = "bizTypes[]", required = false) String[] bizTypes,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        // 非空判断
+        BizAssert.isTrue(
+                !(ArrayUtils.isEmpty(bizTypes) && ArrayUtils.isEmpty(bizIds))
+                // 如果判断结果为false,抛出指定异常
+                , ExceptionCode.BASE_VALID_PARAM.build("附件业务id和业务类型不能同时为空"));
+        // 下载
+        attachmentService.downloadByBiz(request, response, bizTypes, bizIds);
     }
 }
