@@ -7,7 +7,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 
 /**
- *文件策略配置属性类
+ * 文件策略配置属性类
  */
 @Data
 @ConfigurationProperties(prefix = "pinda.file")
@@ -23,7 +23,7 @@ public class FileServerProperties {
     /**
      * 文件访问前缀
      */
-    private String uriPrefix = "" ;
+    private String uriPrefix = "";
     /**
      * 内网通道前缀 主要用于解决某些服务器的无法访问外网ip的问题
      */
@@ -38,6 +38,17 @@ public class FileServerProperties {
             uriPrefix += StrPool.SLASH;
         }
         return uriPrefix;
+    }
+
+    // 指定分片上传时的临时目录
+    private String storagePath;
+
+    public String getStoragePath() {
+        return storagePath;
+    }
+
+    public void setStoragePath(String storagePath) {
+        this.storagePath = storagePath;
     }
 
     private Properties local;

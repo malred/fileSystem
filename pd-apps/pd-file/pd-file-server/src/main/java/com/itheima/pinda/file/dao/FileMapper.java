@@ -32,4 +32,26 @@ public interface FileMapper extends BaseMapper<File> {
                                                   @Param("dataType") String dataType,
                                                   @Param("startTime") LocalDateTime startTime,
                                                   @Param("endTime") LocalDateTime endTime);
+
+    /**
+     * 查询下次次数前20的文件
+     *
+     * @param userId
+     * @return
+     */
+    List<FileStatisticsDO> findDownTop20(@Param("userId") Long userId);
+
+    /**
+     * 统计时间区间内文件的下次次数和大小
+     *
+     * @param userId
+     * @param dateType  日期类型 {MONTH:按月;WEEK:按周;DAY:按日} 来统计
+     * @param startTime
+     * @param endTime
+     * @return
+     */
+    List<FileStatisticsDO> findDownSizeByDate(@Param("userId") Long userId,
+                                              @Param("dateType") String dateType,
+                                              @Param("startTime") LocalDateTime startTime,
+                                              @Param("endTime") LocalDateTime endTime);
 }

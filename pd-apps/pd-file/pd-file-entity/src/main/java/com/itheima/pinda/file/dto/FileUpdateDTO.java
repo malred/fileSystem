@@ -17,6 +17,7 @@ public class FileUpdateDTO implements Serializable {
     @ApiModelProperty(value = "id", required = true)
     @NotNull(message = "文件id不能为空")
     private Long id;
+//    private String id;
     /**
      * 原始文件名
      *
